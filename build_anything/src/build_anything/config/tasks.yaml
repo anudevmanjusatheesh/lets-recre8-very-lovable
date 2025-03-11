@@ -1,0 +1,53 @@
+project_planning_task:
+  description: >
+    Analyze the user requirements for the application and break them down into actionable development tasks. Create a clear roadmap for both frontend and backend development, ensuring tasks are well-defined, sequenced, and assigned to the relevant agents.
+  expected_output: >
+    A detailed task breakdown document outlining the steps required for frontend and backend development, ensuring alignment with user requirements and project goals. This is a static project hence dont go with any database connection.
+  agent: task_breakdown_agent
+
+backend_development_task:
+  description: >
+    Develop the Express.js backend in a single server.js file. Set up the server, only to a point where a simple node server.js helps me load the server and run and i can see the frontend. Absolutely no other operations are required there unless explicitly specified. html css and js files are present in public/ folder always. no other static folder is available.
+  expected_output: >
+    A fully functional server.js file. Give the code without "```" and code should be directly executable. Assign port number 8050 for hosting.
+  agent: backend_developer
+  output_file: server.js
+
+html_development_task:
+  description: >
+    Develop the extremely user friendly user expeience layout of the frontend using  HTML. Ensure the structure is clean, intuitive, and scalable for future enhancements. The layout should include:
+    styles would always comes in styles.css and js is in scripts.js and these will be along side the index.html. For placeholders use url from web for adding images etc. use these images for all image placeholders: [https://images.pexels.com/photos/326055/pexels-photo-326055.jpeg,https://t4.ftcdn.net/jpg/03/08/69/75/360_F_308697506_9dsBYHXm9FwuW0qcEqimAEXUvzTwfzwe.jpg,https://img.freepik.com/free-vector/realistic-background-futuristic-style_23-2149129125.jpg,https://static.vecteezy.com/system/resources/thumbnails/002/202/047/small_2x/blue-high-tech-futuristic-cyberspace-technology-background-free-vector.jpg] for logo placeholder use: https://cbbstwltufvzpsqvnahz.supabase.co/storage/v1/object/public/avatars/public/logoipsum.png. Make sure no whitespaces comes and should have the filled space for the user to understand how exactly it looks in the production and hence populate with enough dummy data.
+  expected_output: >
+    A fully structured and semantic index.html with enough placeholders for user to add in the content, file that adheres to modern web standards, is optimized for accessibility, and is ready for styling and interactivity. But the webspage should be filled with atleast placeholders and should have good standard very professional. The layout must be responsive, and ensure clean integration with CSS and JS.  Output should be directly executable. Only give the code and also without "```"
+  agent: html_developer
+  output_file: index.html
+
+css_development_task:
+  description: >
+    Create a styles.css file to establish a sophisticated and responsive design for the website. The styles should focus on:
+    - Modern design principles with consistent spacing, typography, and a harmonious color scheme.
+    - Responsive layout using Flexbox and CSS Grid for seamless adaptation across devices (desktop, tablet, mobile).
+    - Hover effects, button transitions, and modern card designs for visual appeal.
+    - Styling the navigation bar to be sticky and mobile-friendly with a hamburger menu.
+    - Ensuring accessibility standards like contrast ratios and focus states.
+    - Smooth animations for sections and elements for an engaging user experience.
+    - Consistent utility classes for spacing, typography, and layouts to ensure scalability.
+  expected_output: >
+    A fully styled styles.css file delivering a professional, aesthetically pleasing, and responsive website. The design should reflect modern web standards, be easily maintainable, and ensure a great user experience across devices. Output should be directly executable. Make sure every class from the html is managed correctly and all elements are added with proper styles.Only give the code and also without "```". 
+  agent: css_developer
+  output_file: styles.css
+
+js_development_task:
+  description: >
+    Implement the script.js file to enhance interactivity and ensure smooth dynamic behavior on the frontend. Key functionalities should include:
+    - Implementing a responsive hamburger menu toggle for the navigation bar.
+    - Smooth scroll behavior for navigation links.
+    - Form validation for the contact section with user-friendly feedback messages.
+    - Fetching and rendering data dynamically from the backend APIs, ensuring error handling and loading states.
+    - Adding subtle animations to elements (e.g., fade-in on scroll).
+    - Optimizing performance by minimizing unnecessary DOM manipulations.
+    - Ensuring cross-browser compatibility and smooth interaction handling.
+  expected_output: >
+    A complete and efficient script.js file only if required that enhances the website's interactivity and user experience. The file should handle all dynamic behaviors, and ensure robust error handling for seamless interactions. Output should be directly executable. Only give the code and also without "```"
+  agent: js_developer
+  output_file: script.js

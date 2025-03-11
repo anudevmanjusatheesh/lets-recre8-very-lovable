@@ -1,0 +1,20 @@
+[project]
+name = "build_anything"
+version = "0.1.0"
+description = "build_anything using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<=3.13"
+dependencies = [
+    "crewai[tools]>=0.76.2,<1.0.0"
+]
+
+[project.scripts]
+build_anything = "build_anything.main:run"
+run_crew = "build_anything.main:run"
+train = "build_anything.main:train"
+replay = "build_anything.main:replay"
+test = "build_anything.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
