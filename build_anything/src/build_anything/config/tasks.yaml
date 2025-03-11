@@ -1,6 +1,6 @@
 project_planning_task:
   description: >
-    Analyze the user requirements for the application and break them down into actionable development tasks. Create a clear roadmap for both frontend and backend development, ensuring tasks are well-defined, sequenced, and assigned to the relevant agents.
+    Analyze the user requirements for the application and break them down into actionable development tasks. Create a clear roadmap for both frontend and backend development, ensuring tasks are well-defined, sequenced, and assigned to the relevant agents. The available agents are backend agent for basic server.js build up, html agent, css agent and javascript agent. So breakdown their taks so there would be a great final product visually.
   expected_output: >
     A detailed task breakdown document outlining the steps required for frontend and backend development, ensuring alignment with user requirements and project goals. This is a static project hence dont go with any database connection.
   agent: task_breakdown_agent

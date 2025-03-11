@@ -5,56 +5,55 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Folder from which to list files (adjust as needed)
-const FILES_DIR = path.join(__dirname, 'files');
+// Set the absolute path to the external_sandbox folder.
+// Change this path to your actual external sandbox location.
+const EXTERNAL_SANDBOX_PATH = '../external_sandbox'; 
 
-// Serve static files from the "public" folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Middleware to parse JSON bodies (for chat requests)
-app.use(express.json());
-
-// Helper function to recursively list files and directories
+// Function to recursively list files while skipping "node_modules"
 function listFiles(dirPath, relativePath = '') {
   const items = fs.readdirSync(dirPath, { withFileTypes: true });
-  return items.map(item => {
+  const result = [];
+  items.forEach(item => {
+    // Skip the node_modules folder entirely
+    if (item.name === 'node_modules') return;
     const itemRelativePath = path.join(relativePath, item.name);
     if (item.isDirectory()) {
-      return {
+      result.push({
         name: item.name,
         type: 'directory',
         path: itemRelativePath,
         children: listFiles(path.join(dirPath, item.name), itemRelativePath)
-      };
+      });
     } else {
-      return {
+      result.push({
         name: item.name,
         type: 'file',
         path: itemRelativePath
-      };
+      });
     }
   });
+  return result;
 }
 
-// Endpoint to return the file tree
-app.get('/files', (req, res) => {
+// Route to list the file structure from the external_sandbox folder
+app.get('/external_sandbox', (req, res) => {
   try {
-    const fileList = listFiles(FILES_DIR);
+    const fileList = listFiles(EXTERNAL_SANDBOX_PATH);
     res.json(fileList);
   } catch (error) {
     res.status(500).json({ error: error.toString() });
   }
 });
 
-// Endpoint to fetch file content given its relative path
-app.get('/file', (req, res) => {
+// Route to fetch content of a specific file from external_sandbox
+app.get('/external_file', (req, res) => {
   const relPath = req.query.path;
   if (!relPath) {
     return res.status(400).json({ error: 'No file path specified' });
   }
-  const filePath = path.join(FILES_DIR, relPath);
-  // Ensure that filePath is within FILES_DIR for security
-  if (!filePath.startsWith(FILES_DIR)) {
+  const filePath = path.join(EXTERNAL_SANDBOX_PATH, relPath);
+  // Security check: ensure filePath is within EXTERNAL_SANDBOX_PATH
+  if (!filePath.startsWith(EXTERNAL_SANDBOX_PATH)) {
     return res.status(400).json({ error: 'Invalid file path' });
   }
   fs.stat(filePath, (err, stats) => {
@@ -68,10 +67,8 @@ app.get('/file', (req, res) => {
   });
 });
 
-// Default route: serve the front‑end
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// Serve static files (your UI)
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

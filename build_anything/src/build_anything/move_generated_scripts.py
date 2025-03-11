@@ -18,10 +18,10 @@ def move_file(src, dest_dir):
 
 # Define source files and target directories
 files_to_move = {
-    'index.html': '/mnt/c/Projects/playground/lovable_clone/files/public',
-    'scripts.js': '/mnt/c/Projects/playground/lovable_clone/files/public',
-    'styles.css': '/mnt/c/Projects/playground/lovable_clone/files/public',
-    'server.js': '/mnt/c/Projects/playground/lovable_clone/files'
+    'index.html': '../../../external_sandbox/public',
+    'scripts.js': '../../../external_sandbox/public',
+    'styles.css': '../../../external_sandbox/public',
+    'server.js': '../../../external_sandbox'
 }
 
 # Move files

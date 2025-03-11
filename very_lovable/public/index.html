@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Let's Recreate - Pro Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Highlight.js CSS for code beautification -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/nord.min.css">
+  <style>
+    /* Reset & Global Styles */
+    * { 
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body, html {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      overflow: hidden;
+    }
+    
+    a { 
+      text-decoration: none; 
+      color: inherit; 
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f8fafc;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      height: 70px;
+    }
+    
+    header span {
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-left: 5px;
+    }
+
+    /* Main Container */
+    .container {
+      display: flex;
+      height: calc(100vh - 70px);
+    }
+
+    /* Left Panel: Chat Pad */
+    .left-panel {
+      flex: 0 0 38%;
+      background: #1e293b;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      overflow: hidden;
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .chat-header {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+    }
+    
+    .chat-header::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      margin-right: 10px;
+      box-shadow: 0 0 10px #10b981;
+    }
+    
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .message {
+      margin: 12px 0;
+      padding: 14px 18px;
+      border-radius: 18px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      position: relative;
+      animation: fadeIn 0.3s ease-out;
+      max-width: 85%;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+    
+    .user {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      color: #fff;
+      margin-left: auto;
+      margin-right: 5px;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+    
+    .bot {
+      background: #334155;
+      color: #f1f5f9;
+      margin-right: auto;
+      margin-left: 5px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .loading {
+      font-style: italic;
+      color: #cbd5e1;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-right: auto;
+      margin-left: 5px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-input {
+      display: flex;
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .chat-input input {
+      flex: 1;
+      padding: 16px 20px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #f1f5f9;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .chat-input input::placeholder {
+      color: #94a3b8;
+      opacity: 0.8;
+    }
+    
+    .chat-input button {
+      padding: 0 22px;
+      border: none;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .chat-input button:hover {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    }
+
+    /* Right Panel */
+    .right-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0f172a;
+      padding: 20px;
+      overflow: hidden;
+    }
+    
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    
+    .toggle-container label {
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      margin-right: 10px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #334155;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #3b82f6;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    
+    #reload-btn {
+      padding: 8px 16px;
+      background: #334155;
+      border: none;
+      border-radius: 8px;
+      color: #f1f5f9;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    #reload-btn::before {
+      content: "↻";
+      margin-right: 6px;
+      font-size: 16px;
+    }
+    
+    #reload-btn:hover {
+      background: #475569;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .content-container {
+      flex: 1;
+      overflow-y: auto;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+    
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    /* File Tree Styling */
+    #file-view {
+      padding: 20px;
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    #file-view ul {
+      list-style: none;
+      padding-left: 18px;
+    }
+    
+    #file-view > ul {
+      padding-left: 0;
+    }
+    
+    #file-view li {
+      margin: 8px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    #file-view li:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(3px);
+    }
+    
+    #file-view li .icon {
+      margin-right: 10px;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    #file-view li strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    
+    .file-item {
+      color: #cbd5e1;
+    }
+
+    /* File Content Styling */
+    pre {
+      background: #1a2234;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin: 0;
+      height: calc(100% - 60px);
+    }
+    
+    code {
+      font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    }
+    
+    #back-btn {
+      padding: 10px 16px;
+      margin-bottom: 15px;
+      background: #334155;
+      border: none;
+      border-radius: 8px;
+      color: #f1f5f9;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    #back-btn::before {
+      content: "←";
+      margin-right: 6px;
+      font-size: 16px;
+    }
+    
+    #back-btn:hover {
+      background: #475569;
+      transform: translateX(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Let's Recreate <span>Pro Edition</span>
+  </header>
+  <div class="container">
+    <!-- Left Panel: Chat Pad -->
+    <div class="left-panel">
+      <div class="chat-header">AI Assistant</div>
+      <div class="chat-messages" id="chat-messages">
+        <!-- Chat messages will appear here -->
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Type your message here...">
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
+    <!-- Right Panel: File Structure / Iframe View -->
+    <div class="right-panel">
+      <div class="toggle-container">
+        <div class="toggle-wrapper">
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-view">
+            <span class="slider"></span>
+          </label>
+          <label for="toggle-view">Show File Structure</label>
+        </div>
+        <button id="reload-btn">Reload Panel</button>
+      </div>
+      <div class="content-container" id="right-content">
+        <!-- Iframe View (default) -->
+        <iframe id="iframe-view" src="http://localhost:8050"></iframe>
+        <!-- File Structure View (hidden by default) -->
+        <div id="file-view" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Include Highlight.js for code formatting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script>
+    // Right Panel Elements
+    const toggle = document.getElementById('toggle-view');
+    const iframeView = document.getElementById('iframe-view');
+    const fileView = document.getElementById('file-view');
+    const reloadBtn = document.getElementById('reload-btn');
+
+    // Toggle between iframe view and file structure view
+    toggle.addEventListener('change', function() {
+      if (this.checked) {
+        iframeView.style.display = 'none';
+        fileView.style.display = 'block';
+        fetchFiles();
+      } else {
+        fileView.style.display = 'none';
+        iframeView.style.display = 'block';
+        iframeView.src = iframeView.src;
+      }
+    });
+
+    // Manual reload functionality for right panel
+    reloadBtn.addEventListener('click', reloadRightPanel);
+    function reloadRightPanel() {
+      if (toggle.checked) {
+        fetchFiles();
+      } else {
+        iframeView.src = iframeView.src;
+      }
+    }
+
+    // Fetch file tree from server
+    function fetchFiles() {
+      fetch('/external_sandbox')
+        .then(response => response.json())
+        .then(data => {
+          fileView.innerHTML = renderFileTree(data);
+          attachFileClickEvents();
+        })
+        .catch(err => {
+          fileView.innerHTML = '<p>Error loading files</p>';
+        });
+    }
+    
+
+    // Render file tree recursively
+    function renderFileTree(files) {
+      let html = '<ul>';
+      files.forEach(file => {
+        if (file.type === 'directory') {
+          html += `<li><span class="icon">📁</span><strong>${file.name}</strong>${renderFileTree(file.children)}</li>`;
+        } else {
+          html += `<li class="file-item" data-path="${file.path}"><span class="icon">📄</span>${file.name}</li>`;
+        }
+      });
+      html += '</ul>';
+      return html;
+    }
+
+    // Attach click events to file items
+    function attachFileClickEvents() {
+      document.querySelectorAll('.file-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const filePath = this.getAttribute('data-path');
+          if (filePath) {
+            showFileContent(filePath);
+          } else {
+            console.error('File path is undefined for element:', this);
+          }
+        });
+      });
+    }
+
+    // Fetch and display file content with syntax highlighting
+    function showFileContent(filePath) {
+      fetch('/external_file?path=' + encodeURIComponent(filePath))
+        .then(response => {
+          if (!response.ok) throw new Error('Error fetching file content');
+          return response.text();
+        })
+        .then(data => {
+          fileView.innerHTML = `<button id="back-btn">Back</button><pre><code id="code-block">${escapeHTML(data)}</code></pre>`;
+          document.getElementById('back-btn').addEventListener('click', fetchFiles);
+          hljs.highlightElement(document.getElementById('code-block'));
+        })
+        .catch(err => {
+          fileView.innerHTML = '<p>Error loading file content</p>';
+        });
+    }
+
+    // Escape HTML for safe display of code
+    function escapeHTML(str) {
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    }
+
+    // Chat Functionality
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') sendMessage();
+    });
+
+    function sendMessage() {
+      const message = chatInput.value.trim();
+      if (!message) return;
+      appendMessage('user', `You: ${message}`);
+      chatInput.value = '';
+
+      // Show loading indicator
+      const loadingId = 'loading-' + Date.now();
+      appendMessage('loading', 'AI is thinking...', loadingId);
+
+      // Send chat message to your API at http://localhost:8005
+      fetch('http://localhost:8005/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      })
+      .then(response => response.json())
+      .then(data => {
+        removeMessage(loadingId);
+        appendMessage('bot', `Bot: ${data.reply || 'No reply'}`);
+        // Auto-reload right panel on chat response
+        reloadRightPanel();
+      })
+      .catch(err => {
+        removeMessage(loadingId);
+        appendMessage('bot', 'Error: ' + err.message);
+      });
+    }
+
+    function appendMessage(sender, text, id = null) {
+      const msg = document.createElement('div');
+      msg.className = 'message ' + sender;
+      if (id) msg.id = id;
+      msg.textContent = text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeMessage(id) {
+      const msg = document.getElementById(id);
+      if (msg) msg.remove();
+    }
+  </script>
+</body>
+</html>

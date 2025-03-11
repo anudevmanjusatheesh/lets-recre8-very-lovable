@@ -1,7 +1,7 @@
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from langchain_community.agent_toolkits.file_management.toolkit import FileManagementToolkit
-from build_anything.tools.file_tools import FileTools
+# from build_anything.tools.file_tools import FileTools
 from crewai.memory import LongTermMemory, ShortTermMemory, EntityMemory
 # from crewai.memory.storage import LTMSQLiteStorage, RAGStorage
 from crewai.memory.storage.rag_storage import RAGStorage
@@ -115,10 +115,11 @@ class BuildAnythingCrew():
 		return Crew(
 			agents=self.agents, # Automatically created by the @agent decorator
 			tasks=self.tasks, # Automatically created by the @task decorator
-			process=Process.sequential,
+			# process=Process.sequential,
 			verbose=True,
-			# process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
-
+			manager_agent = task_breakdown_agent(),
+			process=Process.hierarchical, 
+			planning = True,
  			memory = True,
     # Long-term memory for persistent storage across sessions
 			long_term_memory = LongTermMemory(
